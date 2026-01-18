@@ -47,13 +47,18 @@ void handleInputs() {
 
 
 
+//#define SCREENSPACE_ONLY //Only 2D scenes.
+//#define WORLDSPACE_ONLY //Only 3D scenes.
+
+
+
 int main() {
 	try { //Catch exceptions
 
 #ifdef __WIN32
-	SetConsoleOutputCP(65001); //CP_UTF8
+	SetConsoleOutputCP(65001); //CP_UTF8, Windows.
 #else
-	#pragma execution_character_set("utf-8") //Linux
+	#pragma execution_character_set("utf-8") //Linux.
 #endif
 
 	currentWindowResolution = display::WINDOW_RESOLUTION;
@@ -66,9 +71,7 @@ int main() {
 	glfwSetFramebufferSizeCallback(Window, framebufferSizeCallback);
 	glfwGetCursorPos(Window, &cursorPosition.x, &cursorPosition.y);
 	glEnable(GL_BLEND);
-	if (dev::VSYNC) {
-		glfwSwapInterval(1);
-	}
+	glfwSwapInterval((dev::VSYNC) ? 1 : 0);
 
 
 
@@ -87,11 +90,12 @@ int main() {
 
 
 		//Rendering logic here.
+		frame::draw();
 
 
 		float dt = glfwGetTime() - frameStart;
 		if (dev::SHOW_DT_CONSOLE) {std::cout << "Frame #" << frameNumber << " took " << std::setprecision(2) << (dt * 1e3f) << "ms / Hypothetical framerate: " << static_cast<int>(1.0f / dt) << endl;}
-		if (!dev::VSYNC) {while (glfwGetTime() - frameStart < display::DT) {std::this_thread::yield();} /* Wait. */}
+		if (!dev::VSYNC) {while ((glfwGetTime() - frameStart) < display::DT) {std::this_thread::yield();} /* Wait. */}
 		frameRate = ceil(1.0f / (glfwGetTime() - frameStart));
 		if (dev::SHOW_HZ_CONSOLE) {std::cout << "Framerate: " << frameRate << "Hz" << std::endl;}
 

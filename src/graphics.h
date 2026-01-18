@@ -79,6 +79,8 @@ namespace frame {
 
 	inline void renderingGeneric(const std::string& shaderName="");
 
+	void draw();
+
 }
 
 #endif
