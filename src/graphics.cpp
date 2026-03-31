@@ -89,8 +89,14 @@ std::string preprocessIncludes(const std::string& source, const std::string& cur
 
         unsigned int includeLine = lineNumberAt(source, match.position());
 
-        result += "#line 1 \"src/shaders/"+includeFile+".glsl\"\n"+includedSource+"\n"+"#line "+std::to_string(includeLine+1u)+" \""+currentFile+"\"\n";
-
+	#ifdef LINE_DIRECTIVE_STRING
+		//Can be format `#line [lnNum] [srcFile]`
+		result += "#line 1 \"src/shaders/"+includeFile+".glsl\"\n"+includedSource+"\n"+"#line "+std::to_string(includeLine+1u)+" \""+currentFile+"\"\n";
+	#else
+		//Must be of format `#line [lnNum]`
+		result += "#line 1 \n"+includedSource+"\n"+"#line "+std::to_string(includeLine+1u)+" \n";
+	#endif
+		
         lastPos = match.position() + match.length();
     }
 
