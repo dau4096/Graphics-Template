@@ -1,23 +1,27 @@
 CC = g++
-CFLAGS = -std=c++23 -O2 -ffast-math \
-         -I/usr/include \
-         -I/usr/include/GL \
-         -I/usr/include/glm \
-	 -I/usr/local/include
+CFLAGS = -std=c++23 \
+         
+
+INCLUDE = -I/usr/include -I/usr/include/GL -I/usr/include/glm -I/usr/local/include
 
 LIBS = -lglfw -lGLEW -lGL -lpugixml -lm -ldl -pthread
 
 SOURCES = main.cpp src/graphics.cpp src/utils.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
-all: app
+all: release
 
-app: $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBS) -o app
+release: CFLAGS += -O2 -ffast-math
+release: $(OBJECTS)
+	$(CC) $(OBJECTS) $(LIBS) $(INCLUDE) -o $(BINFILE)
+
+debug: CFLAGS += -g -DDEBUG
+debug: $(OBJECTS)
+	$(CC) $(OBJECTS) $(LIBS) $(INCLUDE) -o $(BINFILE)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) app
+	rm -f $(OBJECTS) $(BINFILE)
 
